@@ -1,4 +1,4 @@
-classdef GearReducerForces
+classdef GearReducerForces < matlab.mixin.SetGet
     %GEARREDUCERFORCES Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -13,15 +13,23 @@ classdef GearReducerForces
         Wp2 Force
         Wg1 Force
         Wg2 Force
-        input_torque double
-        output_torque double
+        % note: shears for input/output shaft omitted as they are simple
+        V_cs_input % countershaft, input side
+        V_cs_output % countershaft, output side
+        M_input Moment
+        M_cs_input Moment % countershaft, input side
+        M_cs_output Moment % countershaft, output side
+        M_output Moment
+        T_input double
+        T_cs double
+        T_output double
     end
     
     methods
         function obj = solve(obj, g, ip)
             % input torque
             t_in = ip.input_power / (ip.input_rpm * 2 * pi / 60);
-            obj.input_torque = t_in;
+            obj.T_input = t_in;
             
             % gear radii
             rp_1 = g.pitch_diameter(1) / 2;
@@ -29,7 +37,7 @@ classdef GearReducerForces
             rp_2 = g.pitch_diameter(3) / 2;
             rg_2 = g.pitch_diameter(4) / 2;
             
-            % solve all force equations
+            % define variables & force equations
             syms R1_y R1_z R2_y R2_z R3_y R3_z R4_y R4_z R5_y R5_z R6_y R6_z ...
                 Wp1_y Wp1_z Wp2_y Wp2_z Wg1_y Wg1_z Wg2_y Wg2_z T_machine
             
@@ -78,8 +86,7 @@ classdef GearReducerForces
                 throw(e);
             end
             
-            % otherwise, save into properties
-            obj.output_torque = -S.T_machine;
+            % otherwise, save forces into properties
             obj.R1 = Force(S.R1_y, S.R1_z);
             obj.R2 = Force(S.R2_y, S.R2_z);
             obj.R3 = Force(S.R3_y, S.R3_z);
@@ -90,9 +97,21 @@ classdef GearReducerForces
             obj.Wg1 = Force(S.Wg1_y, S.Wg1_z);
             obj.Wp2 = Force(S.Wp2_y, S.Wp2_z);
             obj.Wg2 = Force(S.Wg2_y, S.Wg2_z);
-        end
-        
-        function generate_diagrams(obj)
+            
+            % compute shear
+            obj.V_cs_input = Force(obj.R3.y, obj.R3.z);
+            obj.V_cs_output = Force(obj.R3.y + obj.Wg1.y, obj.R3.z + obj.Wg1.z);
+            
+            % compute moments
+            obj.M_input = Moment(ip.l_bb1 * obj.R1.y, ip.l_bb1 * obj.R1.z);
+            obj.M_output = Moment(ip.l_bb4 * obj.R6.y, ip.l_bb4 * obj.R6.z);
+            obj.M_cs_input = Moment(ip.l_bb2_g1 * obj.V_cs_input.y, ip.l_bb2_g1 * obj.V_cs_input.z);
+            obj.M_cs_output = Moment(obj.M_cs_input.y + (ip.l_g1_p2 * obj.V_cs_output.y),...
+                obj.M_cs_input.z + (ip.l_g1_p2 * obj.V_cs_output.z));
+
+            % compute torques
+            obj.T_output = -S.T_machine;
+            obj.T_cs = rg_1 * obj.Wg1.z;
         end
     end
     

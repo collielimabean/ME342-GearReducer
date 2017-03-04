@@ -21,6 +21,11 @@ input_params.input_power = 1000; % Watts
 input_params.design_life = 14000; % hours
 input_params.efficiency = 0.95; % -
 
+% selected parameters
+safety_factor = 1.5; % -
+material = 'AISI 1030';
+yield_str = 344.7e6; % Pa
+
 SHOW_FORCE_DIAGRAMS = false;
 
 %% Part A
@@ -30,7 +35,7 @@ gear_forces = GearReducerForces;
 gear_forces = gear_forces.solve(geometry, input_params);
 
 if SHOW_FORCE_DIAGRAMS
-    gear_forces.generate_diagrams();
+    generate_diagrams(gear_forces, input_params);   
 end
 
 %% Part B

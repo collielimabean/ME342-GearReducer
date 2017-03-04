@@ -1,4 +1,4 @@
-classdef Geometry
+classdef Geometry < matlab.mixin.SetGet
     %GEOMETRY Summary of this class goes here
     %   Detailed explanation goes here
     

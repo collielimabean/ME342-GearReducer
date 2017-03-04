@@ -1,4 +1,4 @@
-classdef InputParameters
+classdef InputParameters < matlab.mixin.SetGet
     %INPUTPARAMETERS Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -10,7 +10,7 @@ classdef InputParameters
         l_p2_bb3                    double
         l_g2_bb4                    double
         l_bb4                       double
-        phi                         double = 14.5
+        phi                         double
         module                      double
         p1_teeth                    double
         overall_gear_ratio          double
@@ -21,4 +21,3 @@ classdef InputParameters
         efficiency                  double
     end
 end
-

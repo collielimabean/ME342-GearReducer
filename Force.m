@@ -1,16 +1,10 @@
-classdef Force
+classdef Force < Vec2d
     %FORCES Summary of this class goes here
     %   Detailed explanation goes here
     
-    properties
-        y double
-        z double
-    end
-
     methods
         function obj = Force(y, z)
-            obj.y = y;
-            obj.z = z;
+            obj@Vec2d(y, z);
         end
     end
 end
