@@ -16,15 +16,24 @@ classdef Geometry < matlab.mixin.SetGet
         min_face_width double
         max_face_width double
         thickness = zeros(1, 4)
+        gear_speeds = zeros(1, 4) % rpm
     end
     
     methods
         function obj = Geometry(input_params)
             obj.module = input_params.module;
+            
+            % number of teeth
             obj.num_teeth(1) = input_params.p1_teeth;
             obj.num_teeth(2) = obj.num_teeth(1) * input_params.internal_gear_ratio;
             obj.num_teeth(3) = obj.num_teeth(2) / input_params.internal_gear_ratio;
             obj.num_teeth(4) = obj.num_teeth(3) * input_params.internal_gear_ratio;
+            
+            % gear speeds
+            obj.gear_speeds(1) = input_params.input_rpm;
+            obj.gear_speeds(2) = obj.gear_speeds(1) / input_params.internal_gear_ratio;
+            obj.gear_speeds(3) = obj.gear_speeds(2);
+            obj.gear_speeds(4) = obj.gear_speeds(3) / input_params.internal_gear_ratio;
             
             % compute properties that can be looped
             % formulas taken from original EES code
@@ -39,7 +48,7 @@ classdef Geometry < matlab.mixin.SetGet
                     - (obj.pitch_diameter(i) / 2 - obj.dedendum(i));
                 obj.thickness(i) = obj.circular_pitch(i) / 2;
             end
-            
+
             % center distances
             c2c_input_side = mean(obj.pitch_diameter(1:2));
             c2c_output_side = mean(obj.pitch_diameter(3:4));

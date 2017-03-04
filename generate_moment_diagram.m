@@ -1,5 +1,5 @@
 %% for non distributed loads
-function fig_handle = generate_shear_diagram(load_locations, fig_title_prefix, x_text, y_text)
+function fig_handle = generate_moment_diagram(load_locations, fig_title_prefix, x_text, y_text)
     %% setup
     distances = load_locations(:, 1);
     loads = load_locations(:, 2);

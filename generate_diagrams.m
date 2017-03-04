@@ -5,18 +5,18 @@ function generate_diagrams(forces, ip)
     %% all shear
     generate_shear_diagram( ...
         [
-            0, 93.55;
-            0.03, -93.55;
-            0.06, 0
+            0, forces.R1.y;
+            ip.l_bb1, -forces.R1.y;
+            ip.l_bb1_p1, 0
         ], ...
         'Input Shaft Y' ,'x (m)', 'V_y (N)' ...
     );
 
     generate_shear_diagram( ...
         [
-            0, 361.7;
-            0.03, -361.7;
-            0.06, 0
+            0, forces.R1.z;
+            ip.l_bb4, -forces.R1.z;
+            ip.l_g2_bb4, 0
         ], ...
         'Input Shaft Z' ,'x (m)', 'V_z (N)' ...
     );
